@@ -38,6 +38,9 @@ $ yarn install
 # development
 $ yarn run start
 
+# levantar la bd 
+$ docker-compose up -d 
+
 # watch mode
 $ yarn run start:dev
 

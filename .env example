@@ -1,0 +1,8 @@
+
+
+STATE=dev
+
+POSTGRES_USER=user
+POSTGRES_PASSWORD=password
+POSTGRES_DB=dbNBame
+DB_host=localhost
