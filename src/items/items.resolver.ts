@@ -25,13 +25,15 @@ export class ItemsResolver {
     return await this.itemsService.findOne(id);
   }
 
-  @Mutation(() => Item)
-  updateItem(@Args('updateItemInput') updateItemInput: UpdateItemInput) {
-    return this.itemsService.update(updateItemInput.id, updateItemInput);
+  @Mutation(() => Item, { name: 'updateItem' })
+  async updateItem(@Args('updateItemInput') updateItemInput: UpdateItemInput): Promise<Item> {
+    return await this.itemsService.update(updateItemInput.id, updateItemInput);
   }
 
-  @Mutation(() => Item)
-  removeItem(@Args('id', { type: () => Int }) id: number) {
-    return this.itemsService.remove(id);
+  @Mutation(() => Item, { name: 'removeItem' })
+  async removeItem(
+    @Args('id', { type: () => ID },ParseUUIDPipe) id: string
+  ): Promise<Item> {
+    return await this.itemsService.remove(id);
   }
 }
