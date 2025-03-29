@@ -42,8 +42,19 @@ export class UsersService {
     //return `This action returns all users`;
   }
 
-  findOne(id: string): Promise<User> {
-    throw new Error('Method not implemented.');
+  async findOneByEmail(email: string): Promise<User> {
+    try {
+
+      return await this.usersRepository.findOneByOrFail({ email });
+
+    } catch (error) {
+      throw new BadRequestException(`${email} not found`);
+      
+      /* this.handleBDError({
+        //code: '23505',
+        detail: 'User not found'
+      }); */
+    }
     //return `This action returns a #${id} user`;
   }
 

@@ -15,7 +15,9 @@ export class UsersResolver {
 
   @Query(() => User, { name: 'user' })
   findOne(@Args('id', { type: () => ID }) id: string): Promise<User> {
-    return this.usersService.findOne(id);
+    // TODO crear metodo pendiente a la base de datos
+    throw new Error('Method not implemented.');
+    //return this.usersService.findOne(id);
   }
 /* 
   @Mutation(() => User)
