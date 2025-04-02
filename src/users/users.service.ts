@@ -58,6 +58,14 @@ export class UsersService {
     //return `This action returns a #${id} user`;
   }
 
+  async findOneById(id: string): Promise<User> {
+    try {
+      return await this.usersRepository.findOneByOrFail({ id });
+    } catch (error) {
+      throw new BadRequestException(`${id} not found`);
+    }
+  }
+
   /* update(id: string, updateUserInput: UpdateUserInput): Promise<User> {
     return `This action updates a #${id} user`;
   } */

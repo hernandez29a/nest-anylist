@@ -6,3 +6,6 @@ POSTGRES_USER=user
 POSTGRES_PASSWORD=password
 POSTGRES_DB=dbNBame
 DB_host=localhost
+
+JWT_SECRET=colocarClaveSecreta
+JWT_EXPIRATION=1d
