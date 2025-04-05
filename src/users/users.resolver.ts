@@ -33,11 +33,14 @@ export class UsersResolver {
     return this.usersService.findOneById(id);
     //throw new Error('Method not implemented.');
   }
-/* 
-  @Mutation(() => User)
-  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput): Promise<User> {
-    return this.usersService.update(updateUserInput.id, updateUserInput);
-  } */
+
+  @Mutation(() => User, { name: 'updateUser' })
+  async updateUser(
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+    @CurrentUser([ValidRoles.admin, ValidRoles.superUser ]) adminUser: User,
+  ): Promise<User> {
+    return this.usersService.update(updateUserInput.id, updateUserInput, adminUser);
+  }
 
   @Mutation(() => User, { name: 'blockUser' })
   blockUser(
