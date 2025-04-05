@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { SignupInput } from 'src/auth/dto/inputs/signup.input';
 import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ValidRoles } from 'src/auth/enums/valid-roles.enums';
 
 @Injectable()
 export class UsersService {
@@ -37,9 +38,19 @@ export class UsersService {
     
   }
 
-  async findAll():Promise<User[]> {
-    return [];
-    //return `This action returns all users`;
+  async findAll(roles: ValidRoles[]):Promise<User[]> {
+
+    if (roles.length === 0) return this.usersRepository.find({
+      //TODO no es necesaria por que temenos el lazy declarado en el entity
+      /* relations:{
+        lastUpdateBy: true,
+      } */
+    });
+    
+    return this.usersRepository.createQueryBuilder()
+      .andWhere('ARRAY[roles] && ARRAY[:...roles]')
+      .setParameter('roles', roles)
+      .getMany();
   }
 
   async findOneByEmail(email: string): Promise<User> {
@@ -70,9 +81,15 @@ export class UsersService {
     return `This action updates a #${id} user`;
   } */
 
-    blockUser(id: string): Promise<User> {
-      throw new Error('Method not implemented.');
-    //return `This action removes a #${id} user`;
+    async blockUser(id: string, adminUser: User): Promise<User> {
+
+      const userToBlock = await this.findOneById(id);
+      userToBlock.isactive = false;
+      userToBlock.lastUpdateBy = adminUser;
+
+      await this.usersRepository.save(userToBlock);
+
+      return userToBlock;
   }
 
   private readonly handleBDError = (error: any): never => {
