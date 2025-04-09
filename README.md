@@ -60,6 +60,11 @@ $ yarn run test:e2e
 # test coverage
 $ yarn run test:cov
 ```
+## Ver proyecto funcionando 
+
+```
+http://localhost:3000/graphql
+```
 
 ## Deployment
 

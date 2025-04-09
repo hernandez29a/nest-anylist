@@ -3,6 +3,7 @@ import { CreateItemInput, UpdateItemInput } from './dto/inputs';
 import { Item } from './entities/item.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 
 @Injectable()
@@ -13,17 +14,27 @@ export class ItemsService {
     private readonly itemsRepository: Repository<Item>,
   ) {}
 
-  async create(createItemInput: CreateItemInput): Promise<Item> {
+  async create(createItemInput: CreateItemInput, user: User): Promise<Item> {
 
-    const newItem = this.itemsRepository.create(createItemInput);
+    const newItem = this.itemsRepository.create({
+      ...createItemInput,
+      user, 
+    });
     await this.itemsRepository.save(newItem);
     return newItem;
   }
 
-  findAll(): Promise<Item[]> {
+  findAll(user: User): Promise<Item[]> {
     
     // TODO filtrar , paginar por usuario
-    return this.itemsRepository.find();
+    return this.itemsRepository.find({
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+      
+    });
 
   }
 
