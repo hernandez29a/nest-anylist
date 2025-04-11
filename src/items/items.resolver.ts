@@ -30,19 +30,26 @@ export class ItemsResolver {
   }
 
   @Query(() => Item, { name: 'item' })
-  async findOne(@Args('id', { type: () => ID }, ParseUUIDPipe) id: string): Promise<Item> {
-    return await this.itemsService.findOne(id);
+  async findOne(
+    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+    @CurrentUser() user: User,
+  ): Promise<Item> {
+    return await this.itemsService.findOne(id, user);
   }
 
   @Mutation(() => Item, { name: 'updateItem' })
-  async updateItem(@Args('updateItemInput') updateItemInput: UpdateItemInput): Promise<Item> {
-    return await this.itemsService.update(updateItemInput.id, updateItemInput);
+  async updateItem(
+    @Args('updateItemInput') updateItemInput: UpdateItemInput,
+    @CurrentUser() user: User,
+  ): Promise<Item> {
+    return await this.itemsService.update(updateItemInput.id, updateItemInput, user);
   }
 
   @Mutation(() => Item, { name: 'removeItem' })
   async removeItem(
-    @Args('id', { type: () => ID },ParseUUIDPipe) id: string
+    @Args('id', { type: () => ID },ParseUUIDPipe) id: string,
+    @CurrentUser() user: User,
   ): Promise<Item> {
-    return await this.itemsService.remove(id);
+    return await this.itemsService.remove(id, user);
   }
 }

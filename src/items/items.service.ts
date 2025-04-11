@@ -38,9 +38,14 @@ export class ItemsService {
 
   }
 
-  async findOne(id: string): Promise<Item> {
+  async findOne(id: string, user: User ): Promise<Item> {
 
-    const item = await this.itemsRepository.findOneBy({id});
+    const item = await this.itemsRepository.findOneBy({
+      id,
+      user: {
+        id: user.id,
+      },
+    });
 
     if(!item){
       throw new NotFoundException(`Item #${id} not found`);
@@ -49,7 +54,9 @@ export class ItemsService {
     return  item;
   }
 
-  async update(id: string, updateItemInput: UpdateItemInput): Promise<Item> {
+  async update(id: string, updateItemInput: UpdateItemInput, user: User): Promise<Item> {
+    
+    await this.findOne(id, user);
     
     const item = await this.itemsRepository.preload(updateItemInput);
     if(!item){
@@ -59,13 +66,23 @@ export class ItemsService {
     return await this.itemsRepository.save(item);
   }
 
-  async remove(id: string): Promise<Item> {
+  async remove(id: string, user: User ): Promise<Item> {
     //TODO hacer un borrado logico, integridad referencial
-    const item = await this.findOne(id)
+    const item = await this.findOne(id, user);
     await this.itemsRepository.remove(item);
     return{
       ...item,
       id
     }
+  }
+
+  async itemCountByUser(user: User): Promise<number> {
+    return await this.itemsRepository.count({
+      where: {
+        user: {
+          id: user.id,
+        },
+      }
+    })
   }
 }
