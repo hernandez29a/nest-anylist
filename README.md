@@ -44,6 +44,9 @@ $ docker-compose up -d
 # watch mode
 $ yarn run start:dev
 
+# update data in database
+$ execute the mutation execute seed 
+
 # production mode
 $ yarn run start:prod
 ```
