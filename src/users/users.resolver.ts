@@ -1,15 +1,21 @@
 import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, Int, ID, ResolveField, Parent } from '@nestjs/graphql';
+
 import { UsersService } from './users.service';
+import { ItemsService } from 'src/items/items.service';
+
 import { User } from './entities/user.entity';
-import { CreateUserInput } from './dto/create-user.input';
+import { Item } from 'src/items/entities/item.entity';
+
+//import { CreateUserInput } from './dto/create-user.input';
+
 import { UpdateUserInput } from './dto/update-user.input';
 import { ValidRolesArgs } from './dto/args/roles.args';
+import { PaginationArgs, SearchArgs } from 'src/common/dto/args';
 
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { ValidRoles } from 'src/auth/enums/valid-roles.enums';
-import { ItemsService } from 'src/items/items.service';
 
 @Resolver(() => User)
 @UseGuards(JwtAuthGuard)
@@ -60,5 +66,15 @@ export class UsersResolver {
     @Parent() user: User,
   ): Promise<Number> {
     return this.itemsService.itemCountByUser(user);
+  }
+
+  @ResolveField( () => [Item], { name: 'items' })
+  async getAllItems(
+    @CurrentUser([ValidRoles.admin, ValidRoles.superUser ]) adminUser: User,
+    @Parent() user: User,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs,
+  ): Promise<Item[]> {
+    return await this.itemsService.findAll(user, paginationArgs, searchArgs);
   }
 }
