@@ -10,7 +10,39 @@ type User {
   isactive: Boolean!
   lastUpdateBy: User
   itemCount: Int!
+  listCount: Int!
   items(offset: Int = 0, limit: Int = 5, search: String): [Item!]!
+  lists(offset: Int = 0, limit: Int = 5, search: String): [Item!]!
+}
+
+type List {
+  """ID of the list"""
+  id: ID!
+
+  """Name of the list"""
+  name: String!
+
+  """User who created the list"""
+  user: User!
+  items(offset: Int = 0, limit: Int = 5, search: String): [ListItem!]!
+  totalItems: Float!
+}
+
+type ListItem {
+  """ID of the list"""
+  id: ID!
+
+  """Quantity of the item"""
+  quantity: Float!
+
+  """If the item is completed"""
+  completed: Boolean!
+
+  """List associated with the list item"""
+  list: List!
+
+  """Item associated with the list item"""
+  item: Item!
 }
 
 type Item {
@@ -18,6 +50,7 @@ type Item {
   name: String!
   quantityUnits: String
   user: User
+  listItem: [ListItem!]!
 }
 
 type AuthResponse {
@@ -30,6 +63,9 @@ type Query {
   item(id: ID!): Item!
   users(roles: [ValidRoles!] = []): [User!]!
   user(id: ID!): User!
+  lists(offset: Int = 0, limit: Int = 5, search: String): [List!]!
+  list(id: Int!): List!
+  listItem(id: String!): ListItem!
   revalite: AuthResponse!
 }
 
@@ -46,6 +82,11 @@ type Mutation {
   removeItem(id: ID!): Item!
   updateUser(updateUserInput: UpdateUserInput!): User!
   blockUser(id: ID!): User!
+  createList(createListInput: CreateListInput!): List!
+  updateList(updateListInput: UpdateListInput!): List!
+  removeList(id: Int!): List!
+  createListItem(createListItemInput: CreateListItemInput!): ListItem!
+  updateListItem(updateListItemInput: UpdateListItemInput!): ListItem!
   signup(signupInput: SignupInput!): AuthResponse!
   login(loginInput: LoginInput!): AuthResponse!
 
@@ -71,6 +112,42 @@ input UpdateUserInput {
   id: ID!
   roles: [ValidRoles!]
   isactive: Boolean
+}
+
+input CreateListInput {
+  """Name of the list"""
+  name: String!
+}
+
+input UpdateListInput {
+  """Name of the list"""
+  name: String
+  id: ID!
+}
+
+input CreateListItemInput {
+  """Quantity of the item"""
+  quantity: Float = 0
+
+  """If the item is completed"""
+  completed: Boolean = false
+  listId: ID!
+
+  """ID of the item"""
+  itemId: String!
+}
+
+input UpdateListItemInput {
+  """Quantity of the item"""
+  quantity: Float = 0
+
+  """If the item is completed"""
+  completed: Boolean = false
+  listId: ID
+
+  """ID of the item"""
+  itemId: String
+  id: ID!
 }
 
 input SignupInput {
